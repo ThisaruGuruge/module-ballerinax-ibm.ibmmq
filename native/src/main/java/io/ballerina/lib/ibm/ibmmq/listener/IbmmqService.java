@@ -18,10 +18,10 @@
 
 package io.ballerina.lib.ibm.ibmmq.listener;
 
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Parameter;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.types.RemoteMethodType;
 import io.ballerina.runtime.api.types.ServiceType;
 import io.ballerina.runtime.api.types.Type;
@@ -32,13 +32,10 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 
-import java.util.UUID;
-
 import static io.ballerina.lib.ibm.ibmmq.CommonUtils.createError;
 import static io.ballerina.lib.ibm.ibmmq.Constants.BMESSAGE_NAME;
 import static io.ballerina.lib.ibm.ibmmq.Constants.IBMMQ_ERROR;
 import static io.ballerina.lib.ibm.ibmmq.ModuleUtils.getModule;
-import static io.ballerina.lib.ibm.ibmmq.listener.Listener.SUBSCRIPTION_NAME;
 import static io.ballerina.lib.ibm.ibmmq.listener.Listener.TOPIC_NAME;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPARATOR;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.VERSION_SEPARATOR;
@@ -50,10 +47,13 @@ import static io.ballerina.runtime.api.constants.RuntimeConstants.VERSION_SEPARA
  * @since 1.3.0
  */
 public class IbmmqService {
+    private static final String CLIENT_NAME = "BALLERINA_IBMMQ_CLIENT";
+
     private static final String SERVICE_CONFIG_ANNOTATION_NAME = "ServiceConfig";
+
     private static final BString CONFIG = StringUtils.fromString("config");
     private static final BString POLLING_INTERVAL = StringUtils.fromString("pollingInterval");
-    private static final String CLIENT_NAME = "BALLERINA_IBMMQ_CLIENT";
+    static final BString SUBSCRIPTION_NAME = StringUtils.fromString("subscriptionName");
 
     private final ServiceType serviceType;
     private RemoteMethodType onMessageMethod;
@@ -64,6 +64,7 @@ public class IbmmqService {
     private BMap<BString, Object> serviceConfig;
     private BMap<BString, Object> config;
     private BDecimal pollingInterval;
+    private String subscriptionName;
 
     IbmmqService(BObject service) {
         this.serviceType = (ServiceType) TypeUtils.getType(service);
@@ -79,10 +80,23 @@ public class IbmmqService {
             throw createError(IBMMQ_ERROR, "IBMMQ service must have exactly one or two remote methods");
         }
         validateRemoteMethods(remoteMethods);
-        this.setAnnotation();
+        this.setConfigs();
+        this.setSubscriptionName();
     }
 
-    private void setAnnotation() {
+    private void setSubscriptionName() {
+        if (this.config.containsKey(SUBSCRIPTION_NAME)) {
+            this.subscriptionName = config.getStringValue(SUBSCRIPTION_NAME).getValue();
+        } else {
+            this.subscriptionName = CLIENT_NAME;
+        }
+    }
+
+    public String getSubscriptionName() {
+        return this.subscriptionName;
+    }
+
+    private void setConfigs() {
         BMap<BString, Object> serviceConfig =
                 (BMap<BString, Object>) this.serviceType.getAnnotation(getServiceConfigAnnotationName());
         if (serviceConfig == null) {
@@ -173,12 +187,5 @@ public class IbmmqService {
 
     public BMap<BString, Object> getConfig() {
         return this.config;
-    }
-
-    public String getSubscriptionName() {
-        if (this.config.containsKey(SUBSCRIPTION_NAME)) {
-            return this.config.getStringValue(SUBSCRIPTION_NAME).getValue();
-        }
-        return CLIENT_NAME + UUID.randomUUID();
     }
 }

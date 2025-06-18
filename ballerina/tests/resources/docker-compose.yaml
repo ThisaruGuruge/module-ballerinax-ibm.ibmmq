@@ -17,6 +17,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    volumes:
+      - ./configs/config.mqsc:/etc/configs/config.mqsc
+      - ./configs/topic-config.mqsc:/etc/configs/topic-config.mqsc
+      - ./configs/apply-config.sh:/etc/mqm/apply-config.sh
+    command: ["sh", "-c", "/etc/mqm/apply-config.sh"]
 
   mq-tls:
     image: icr.io/ibm-messaging/mq:latest
@@ -28,6 +33,9 @@ services:
       - MQ_QMGR_NAME=QM2
       - MQ_APP_PASSWORD=password
     volumes:
+      - ./configs/config.mqsc:/etc/configs/config.mqsc
+      - ./configs/topic-config.mqsc:/etc/configs/topic-config.mqsc
+      - ./configs/apply-config.sh:/etc/mqm/apply-config.sh
       - ./secrets/server.crt:/etc/mqm/pki/keys/mykey/server.crt
       - ./secrets/server.key:/etc/mqm/pki/keys/mykey/server.key
       - ./secrets/client.crt:/etc/mqm/pki/trust/0/client.crt
@@ -36,3 +44,4 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    command: ["sh", "-c", "/etc/mqm/apply-config.sh"]

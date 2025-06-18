@@ -56,3 +56,5 @@ function testConsumeMessageFromServiceWithQueue() returns error? {
     runtime:sleep(2);
     test:assertEquals(string:fromBytes(payload1), "Hello World from queue");
 }
+
+

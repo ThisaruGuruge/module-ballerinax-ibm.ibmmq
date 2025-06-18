@@ -15,15 +15,11 @@
 // under the License.
 
 plugins {
-    id "com.github.spotbugs-base"
+    id "com.github.spotbugs"
     id "com.github.johnrengelman.shadow"
     id "de.undercouch.download"
     id "net.researchgate.release"
 }
-
-ext.ballerinaLangVersion = project.ballerinaLangVersion
-ext.ibmMQVersion = project.ibmMQVersion
-ext.jsonVersion = project.jsonVersion
 
 allprojects {
     group = project.group
@@ -83,8 +79,6 @@ subprojects {
         ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${observeVersion}"
         ballerinaStdLibs "io.ballerina:observe-ballerina:${observeInternalVersion}"
     }
-
-    task allDeps(type: DependencyReportTask) {}
 }
 
 def moduleVersion = project.version.replace("-SNAPSHOT", "")

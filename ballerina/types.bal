@@ -36,9 +36,9 @@ public type QueueConfig record {|
 # + matchOptions - Message selection criteria
 public type TopicConfig record {|
     string topicName;
-    string? subscriptionName = ();
-    boolean durable = true;
-    int options = MQSO_CREATE;
+    string subscriptionName;
+    boolean durable = false;
+    int options = OPEN_AS_SUBSCRIPTION;
     MatchOptions matchOptions?;
 |};
 

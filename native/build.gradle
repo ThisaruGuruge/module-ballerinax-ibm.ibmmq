@@ -15,10 +15,12 @@
 // under the License.
 
 plugins {
-    id 'java-library'
+    id 'java'
     id 'checkstyle'
     id 'com.github.spotbugs'
 }
+
+description = 'Ballerina - IBM MQ Native'
 
 dependencies {
     checkstyle project(':checkstyle')

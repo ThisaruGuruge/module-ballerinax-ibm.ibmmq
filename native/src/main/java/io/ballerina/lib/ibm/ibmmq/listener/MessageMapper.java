@@ -16,8 +16,9 @@
  *  under the License.
  */
 
-package io.ballerina.lib.ibm.ibmmq;
+package io.ballerina.lib.ibm.ibmmq.listener;
 
+import io.ballerina.lib.ibm.ibmmq.Constants;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
